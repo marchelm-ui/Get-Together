@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Button, Card, H, Input, Muted, Screen } from '../components/ui';
@@ -40,6 +40,25 @@ export default function Home() {
     catch (e) { setMsg((e as Error).message); } finally { setBusy(null); }
   };
 
+  const onLongPress = (g: Group) => {
+    if (!store) return;
+    const mine = g.createdBy === store.userId();
+    Alert.alert(
+      mine ? 'Delete this calendar?' : 'Leave this calendar?',
+      mine ? `"${g.name}" will be removed for everyone on it.` : `You'll be removed from "${g.name}".`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: mine ? 'Delete' : 'Leave', style: 'destructive', onPress: async () => {
+          try {
+            if (mine) await store.deleteGroup(g.id);
+            else { const st = await new Promise<import('../lib/types').GroupState | null>((res) => { const un = store.subscribeGroup(g.id, (x) => { un(); res(x); }); }); const me = st?.members.find((m) => m.userId === store.userId()); if (me) await store.removeMember(me.id); }
+            load();
+          } catch (e) { setMsg((e as Error).message); }
+        } },
+      ],
+    );
+  };
+
   if (!store && !error) return <Screen><ActivityIndicator style={{ marginTop: 60 }} color={theme.accent} /></Screen>;
 
   return (
@@ -70,11 +89,11 @@ export default function Home() {
             {error ? <Text style={st.msg}>{error}</Text> : null}
             {store?.kind === 'local' ? <Muted style={{ marginBottom: 10 }}>Offline mode — this phone only.{lastStoreError ? ` Server: ${lastStoreError}` : ''}</Muted> : null}
             <H>Your calendars</H>
-            {groups && groups.length === 0 ? <Muted>None yet. Create one above or join with a code.</Muted> : null}
+            {groups && groups.length === 0 ? <Muted>None yet. Create one above or join with a code.</Muted> : <Muted style={{ marginBottom: 6 }}>Hold a calendar to delete or leave it.</Muted>}
           </View>
         }
         renderItem={({ item }) => (
-          <Pressable onPress={() => router.push(`/group/${item.id}`)} style={({ pressed }) => [st.row, pressed && { opacity: 0.7 }]}>
+          <Pressable onPress={() => router.push(`/group/${item.id}`)} onLongPress={() => onLongPress(item)} delayLongPress={400} style={({ pressed }) => [st.row, pressed && { opacity: 0.7 }]}>
             <View style={{ flex: 1 }}>
               <Text style={st.rowTitle}>{item.name}</Text>
               <Muted>Code {item.code}</Muted>

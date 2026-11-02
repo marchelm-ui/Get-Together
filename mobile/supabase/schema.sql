@@ -108,6 +108,8 @@ drop policy if exists groups_select on groups;
 create policy groups_select on groups for select using (is_member(id));
 drop policy if exists groups_update on groups;
 create policy groups_update on groups for update using (created_by = auth.uid());
+drop policy if exists groups_delete on groups;
+create policy groups_delete on groups for delete using (created_by = auth.uid());
 
 drop policy if exists members_select on members;
 create policy members_select on members for select using (is_member(group_id));

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import * as Linking from 'expo-linking';
 import * as Clipboard from 'expo-clipboard';
@@ -33,6 +33,12 @@ export default function PeopleScreen() {
     setConfirm(null);
     try { await store?.removeMember(mid); if (mid === me?.id) router.replace('/'); } catch (e) { setMsg((e as Error).message); }
   };
+
+  const isCreator = !!store && group.createdBy === store.userId();
+  const deleteGroup = () => Alert.alert('Delete this calendar?', `"${group.name}" will be removed for everyone on it. This can't be undone.`, [
+    { text: 'Cancel', style: 'cancel' },
+    { text: 'Delete', style: 'destructive', onPress: async () => { try { await store!.deleteGroup(group.id); router.replace('/'); } catch (e) { setMsg((e as Error).message); } } },
+  ]);
 
   return (
     <Screen>
@@ -82,6 +88,12 @@ export default function PeopleScreen() {
             </View>
           ) : null}
         </Card>
+        {isCreator ? (
+          <Card>
+            <H sub="You created this calendar. Deleting removes it for everyone.">Danger zone</H>
+            <Button title="Delete calendar" variant="danger" onPress={deleteGroup} />
+          </Card>
+        ) : null}
       </ScrollView>
     </Screen>
   );

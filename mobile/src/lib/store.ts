@@ -17,6 +17,8 @@ export interface Store {
   saveOverride(memberId: string, date: string, mask: number | null): Promise<void>;
   renameMember(memberId: string, nickname: string): Promise<void>;
   removeMember(memberId: string): Promise<void>;
+  /** Delete a whole calendar (creator only). */
+  deleteGroup(groupId: string): Promise<void>;
   /** Local mode only: add a person who isn't on their own phone. */
   addLocalMember?(groupId: string, nickname: string): Promise<Member>;
 }
@@ -51,7 +53,7 @@ export class LocalStore implements Store {
   userId() { return this.db.userId; }
   async listMyGroups() { return [...this.db.groups]; }
   async createGroup(name: string, nickname: string) {
-    const g: Group = { id: uid(), code: genCode(), name, createdAt: new Date().toISOString() };
+    const g: Group = { id: uid(), code: genCode(), name, createdBy: this.db.userId, createdAt: new Date().toISOString() };
     this.db.groups.push(g);
     const m: Member = { id: uid(), groupId: g.id, userId: this.db.userId, nickname, color: nextColor([]), createdAt: g.createdAt };
     this.db.members.push(m);
@@ -102,6 +104,12 @@ export class LocalStore implements Store {
     await this.flush();
   }
   async renameMember(memberId: string, nickname: string) { const m = this.db.members.find((x) => x.id === memberId); if (m) m.nickname = nickname; await this.flush(); }
+  async deleteGroup(groupId: string) {
+    const ids = this.db.members.filter((m) => m.groupId === groupId).map((m) => m.id);
+    for (const id of ids) await this.removeMember(id);
+    this.db.groups = this.db.groups.filter((g) => g.id !== groupId);
+    await this.flush();
+  }
   async removeMember(memberId: string) {
     const u = this.userOf(memberId);
     this.db.members = this.db.members.filter((m) => m.id !== memberId);
@@ -117,7 +125,7 @@ export class LocalStore implements Store {
 // Supabase store — shared across phones, realtime
 // =====================================================================
 type Row = Record<string, any>;
-const toGroup = (r: Row): Group => ({ id: r.id, code: r.code, name: r.name, createdAt: r.created_at });
+const toGroup = (r: Row): Group => ({ id: r.id, code: r.code, name: r.name, createdBy: r.created_by, createdAt: r.created_at });
 const toMember = (r: Row): Member => ({ id: r.id, groupId: r.group_id, userId: r.user_id, nickname: r.nickname, color: r.color, createdAt: r.created_at });
 
 export class SupabaseStore implements Store {
@@ -234,6 +242,10 @@ export class SupabaseStore implements Store {
   }
   async removeMember(memberId: string) {
     const { error } = await this.sb.from('members').delete().eq('id', memberId);
+    if (error) throw new Error(error.message);
+  }
+  async deleteGroup(groupId: string) {
+    const { error } = await this.sb.from('groups').delete().eq('id', groupId);
     if (error) throw new Error(error.message);
   }
 }

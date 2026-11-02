@@ -26,6 +26,7 @@ export interface Group {
   id: string;
   code: string;       // short invite code, e.g. "K7P2QD"
   name: string;
+  createdBy: string; // userId of the creator — only they can delete the calendar
   createdAt: string;
 }
 
