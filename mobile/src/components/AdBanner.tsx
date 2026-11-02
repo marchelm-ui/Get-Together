@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Platform, View } from 'react-native';
-import { ADMOB_BANNER_ANDROID, ADMOB_BANNER_IOS } from '../lib/config';
+import { ADMOB_BANNER_ANDROID, ADMOB_BANNER_IOS, USE_TEST_ADS } from '../lib/config';
 
 /**
  * Bottom banner ad. Safe everywhere:
@@ -24,16 +24,24 @@ export function initAds() {
   try { ads.default().initialize().catch(() => {}); } catch {}
 }
 
-export function AdBanner() {
+function AdBannerInner() {
   const [ready, setReady] = useState(false);
   useEffect(() => { initAds(); setReady(true); }, []);
   if (!ads || !ready) return null;
   const { BannerAd, BannerAdSize, TestIds } = ads;
   const configured = Platform.OS === 'ios' ? ADMOB_BANNER_IOS : ADMOB_BANNER_ANDROID;
-  const unitId = __DEV__ || !configured ? TestIds.ADAPTIVE_BANNER : configured;
+  const unitId = __DEV__ || USE_TEST_ADS || !configured ? TestIds.ADAPTIVE_BANNER : configured;
   return (
     <View style={{ alignItems: 'center', backgroundColor: '#f6f7fb' }}>
       <BannerAd unitId={unitId} size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER} requestOptions={{ requestNonPersonalizedAdsOnly: true }} />
     </View>
   );
+}
+
+/** If the native ad view fails for any reason, show nothing rather than crashing the app. */
+export class AdBanner extends React.Component<{}, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() { return { failed: true }; }
+  componentDidCatch(e: Error) { console.warn('Ad banner failed:', e.message); }
+  render() { return this.state.failed ? null : <AdBannerInner />; }
 }

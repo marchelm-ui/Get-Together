@@ -4,6 +4,7 @@ import { router, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Button, Card, H, Input, Muted, Screen } from '../components/ui';
 import { useStore } from '../lib/hooks';
+import { lastStoreError } from '../lib/store';
 import { theme } from '../lib/colors';
 import type { Group } from '../lib/types';
 
@@ -67,7 +68,7 @@ export default function Home() {
             </Card>
             {msg ? <Text style={st.msg}>{msg}</Text> : null}
             {error ? <Text style={st.msg}>{error}</Text> : null}
-            {store?.kind === 'local' ? <Muted style={{ marginBottom: 10 }}>Offline mode — this phone only. Set up Supabase (see README) to share with other phones.</Muted> : null}
+            {store?.kind === 'local' ? <Muted style={{ marginBottom: 10 }}>Offline mode — this phone only.{lastStoreError ? ` Server: ${lastStoreError}` : ''}</Muted> : null}
             <H>Your calendars</H>
             {groups && groups.length === 0 ? <Muted>None yet. Create one above or join with a code.</Muted> : null}
           </View>

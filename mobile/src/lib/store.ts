@@ -240,6 +240,8 @@ export class SupabaseStore implements Store {
 
 // =====================================================================
 let storePromise: Promise<Store> | null = null;
+/** Why the shared store wasn't used (shown on the home screen in offline mode). */
+export let lastStoreError: string | null = null;
 /** Tries Supabase first; falls back to the on-device store if the server can't be reached. */
 export function getStore(): Promise<Store> {
   if (!storePromise) {
@@ -247,10 +249,14 @@ export function getStore(): Promise<Store> {
       if (SUPABASE_URL && SUPABASE_KEY) {
         try {
           const s = new SupabaseStore();
-          await s.init();
+          await Promise.race([
+            s.init(),
+            new Promise((_, rej) => setTimeout(() => rej(new Error('Timed out reaching the server')), 8000)),
+          ]);
           return s;
         } catch (e) {
-          console.warn('Supabase unavailable, using local store:', (e as Error).message);
+          lastStoreError = (e as Error).message;
+          console.warn('Supabase unavailable, using local store:', lastStoreError);
         }
       }
       const l = new LocalStore();

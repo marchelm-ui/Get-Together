@@ -16,11 +16,18 @@
     "react-native": "0.88.1",
     "react-native-google-mobile-ads": "^17.4.0",
     "react-native-safe-area-context": "~5.10.1",
-    "react-native-screens": "~4.30.1"
+    "react-native-screens": "~4.30.1",
+    "react-native-url-polyfill": "^4.0.0"
   },
   "devDependencies": {
+    "@react-native/jest-preset": "^0.88.1",
+    "@testing-library/react-native": "^14.1.0",
+    "@types/jest": "^30.0.0",
     "@types/react": "~19.3.0",
     "eas-cli": "^27.2.0",
+    "jest": "^30.5.2",
+    "jest-expo": "~58.0.13",
+    "react-test-renderer": "^19.3.0",
     "typescript": "~6.0.3"
   },
   "scripts": {

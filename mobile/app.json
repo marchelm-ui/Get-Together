@@ -19,7 +19,6 @@
       },
       "predictiveBackGestureEnabled": false,
       "package": "com.marchelm.gettogether",
-      "versionCode": 1,
       "permissions": [
         "com.google.android.gms.permission.AD_ID"
       ]

@@ -13,3 +13,6 @@ export const MAX_PEOPLE = 20;
 // (Apps → your app → Ad units → Banner) and paste them here before the production build.
 export const ADMOB_BANNER_ANDROID = process.env.EXPO_PUBLIC_ADMOB_BANNER_ANDROID ?? 'ca-app-pub-7603774271160943/6828818480';
 export const ADMOB_BANNER_IOS = process.env.EXPO_PUBLIC_ADMOB_BANNER_IOS ?? '';
+
+// Set to '1' by eas.json for development/preview builds: real ads only in the store build.
+export const USE_TEST_ADS = process.env.EXPO_PUBLIC_USE_TEST_ADS === '1';
