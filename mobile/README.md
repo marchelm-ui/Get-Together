@@ -67,3 +67,34 @@ npx expo-doctor       # dependency health
 - Import busy times from the phone calendar
 - Pick a date and send everyone an event
 - Time-zone support for far-flung groups
+
+## Ads (AdMob)
+
+A banner ad sits at the bottom of every screen (`src/components/AdBanner.tsx`). It uses Google's **test ad IDs** until you paste real ones — showing real ads to yourself during testing violates AdMob policy and can get the account suspended.
+
+1. Create an account at [admob.google.com](https://admob.google.com) → **Apps → Add app** (Android, "Get-Together").
+2. Copy the **App ID** (`ca-app-pub-…~…`) into `app.json` under the `react-native-google-mobile-ads` plugin (`androidAppId`).
+3. **Ad units → Add ad unit → Banner**. Copy the unit ID (`ca-app-pub-…/…`) into `src/lib/config.ts` as `ADMOB_BANNER_ANDROID` (or a `.env` file as `EXPO_PUBLIC_ADMOB_BANNER_ANDROID`).
+
+Ads do **not** show in Expo Go (it can't load the native ads module) — the banner silently renders nothing there. They appear in a development or production build.
+
+## Building for Google Play
+
+Builds run in Expo's cloud (EAS) — no Android Studio needed.
+
+```bash
+npx eas-cli login                       # free Expo account
+npx eas-cli init                        # links this folder to an EAS project (one time)
+npx eas-cli build -p android --profile preview      # → installable .apk for your Pixel (ads visible)
+npx eas-cli build -p android --profile production   # → .aab for the Play Store
+```
+
+Play Store checklist:
+- [ ] Google Play Console developer account ($25 one-time) at play.google.com/console
+- [ ] Create the app, package name **`com.marchelm.gettogether`** (already set in `app.json`)
+- [ ] Privacy policy URL — `docs/privacy.html` is a ready draft; host it with GitHub Pages (repo Settings → Pages → `/docs`) and the URL becomes `https://marchelm-ui.github.io/Get-Together/privacy.html`
+- [ ] Data safety form: declare "device or other IDs" (ads) and "app activity" (schedules you enter), shared with Google for advertising
+- [ ] Ads declaration: **Yes, contains ads**
+- [ ] Store listing: icon (`assets/icon.png`), feature graphic 1024×500, 2+ screenshots
+- [ ] Upload the `.aab` to Internal testing first, then Production
+- [ ] Optional: `npx eas-cli submit -p android` uploads automatically once you add a Play service-account JSON (see `eas.json`)

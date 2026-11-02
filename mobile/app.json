@@ -7,7 +7,8 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.marchelm.gettogether"
     },
     "android": {
       "adaptiveIcon": {
@@ -16,7 +17,12 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.marchelm.gettogether",
+      "versionCode": 1,
+      "permissions": [
+        "com.google.android.gms.permission.AD_ID"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png",
@@ -25,13 +31,24 @@
     },
     "scheme": "gettogether",
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "react-native-google-mobile-ads",
+        {
+          "androidAppId": "ca-app-pub-3940256099942544~3347511713",
+          "iosAppId": "ca-app-pub-3940256099942544~1458002511",
+          "userTrackingUsageDescription": "This lets us show ads that are more relevant to you."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": false
     },
     "splash": {
       "backgroundColor": "#4f46e5"
+    },
+    "extra": {
+      "eas": {}
     }
   }
 }

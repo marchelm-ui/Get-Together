@@ -1,10 +1,14 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { theme } from '../lib/colors';
+import { AdBanner } from '../components/AdBanner';
 
 export default function RootLayout() {
+  const insets = useSafeAreaInsets();
   return (
-    <>
+    <View style={{ flex: 1, backgroundColor: theme.bg, paddingBottom: insets.bottom }}>
       <StatusBar style="dark" />
       <Stack
         screenOptions={{
@@ -22,6 +26,7 @@ export default function RootLayout() {
         <Stack.Screen name="group/[id]/schedule" options={{ title: 'My work schedule', presentation: 'modal' }} />
         <Stack.Screen name="group/[id]/people" options={{ title: 'People & invite', presentation: 'modal' }} />
       </Stack>
-    </>
+      <AdBanner />
+    </View>
   );
 }

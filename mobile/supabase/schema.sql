@@ -137,3 +137,12 @@ exception when duplicate_object then null; end $$;
 do $$ begin
   alter publication supabase_realtime add table day_overrides;
 exception when duplicate_object then null; end $$;
+
+-- ---------- lock down function access ----------
+revoke execute on function public.is_member(uuid) from anon, authenticated, public;
+revoke execute on function public.shares_group(uuid) from anon, authenticated, public;
+revoke execute on function public.gen_code() from anon, authenticated, public;
+revoke execute on function public.create_group(text, text, text) from anon, public;
+revoke execute on function public.join_group(text, text, text) from anon, public;
+grant execute on function public.create_group(text, text, text) to authenticated;
+grant execute on function public.join_group(text, text, text) to authenticated;

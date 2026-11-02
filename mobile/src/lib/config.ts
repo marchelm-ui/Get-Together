@@ -8,3 +8,8 @@ export const SUPABASE_KEY = process.env.EXPO_PUBLIC_SUPABASE_KEY ?? 'sb_publisha
 export const INVITE_WEB_BASE = process.env.EXPO_PUBLIC_INVITE_BASE ?? '';
 
 export const MAX_PEOPLE = 20;
+
+// AdMob banner unit IDs. Leave empty to use Google's test ads. Create real ones at admob.google.com
+// (Apps → your app → Ad units → Banner) and paste them here before the production build.
+export const ADMOB_BANNER_ANDROID = process.env.EXPO_PUBLIC_ADMOB_BANNER_ANDROID ?? '';
+export const ADMOB_BANNER_IOS = process.env.EXPO_PUBLIC_ADMOB_BANNER_IOS ?? '';

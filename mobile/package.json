@@ -13,11 +13,13 @@
     "expo-status-bar": "~58.0.4",
     "react": "19.3.0",
     "react-native": "0.88.1",
+    "react-native-google-mobile-ads": "^17.4.0",
     "react-native-safe-area-context": "~5.10.1",
     "react-native-screens": "~4.30.1"
   },
   "devDependencies": {
     "@types/react": "~19.3.0",
+    "eas-cli": "^27.2.0",
     "typescript": "~6.0.3"
   },
   "scripts": {
