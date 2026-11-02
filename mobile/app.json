@@ -48,7 +48,9 @@
       "backgroundColor": "#4f46e5"
     },
     "extra": {
-      "eas": {}
+      "eas": {
+        "projectId": "9ae439cd-4255-4b1f-9164-6477b9a6d3de"
+      }
     },
     "owner": "marcusahelms-team"
   }
