@@ -11,5 +11,5 @@ export const MAX_PEOPLE = 20;
 
 // AdMob banner unit IDs. Leave empty to use Google's test ads. Create real ones at admob.google.com
 // (Apps → your app → Ad units → Banner) and paste them here before the production build.
-export const ADMOB_BANNER_ANDROID = process.env.EXPO_PUBLIC_ADMOB_BANNER_ANDROID ?? '';
+export const ADMOB_BANNER_ANDROID = process.env.EXPO_PUBLIC_ADMOB_BANNER_ANDROID ?? 'ca-app-pub-7603774271160943/6828818480';
 export const ADMOB_BANNER_IOS = process.env.EXPO_PUBLIC_ADMOB_BANNER_IOS ?? '';
