@@ -207,7 +207,7 @@ export class SupabaseStore implements Store {
       }, 150);
     };
     refresh();
-    const ch = this.sb.channel('group-' + groupId)
+    const ch = this.sb.channel('group-' + groupId + '-' + uid())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'members', filter: `group_id=eq.${groupId}` }, refresh)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'schedules' }, refresh)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'day_overrides' }, refresh)
@@ -255,7 +255,7 @@ export function getStore(): Promise<Store> {
           ]);
           return s;
         } catch (e) {
-          lastStoreError = (e as Error).message;
+          lastStoreError = (e as Error)?.message || String(e);
           console.warn('Supabase unavailable, using local store:', lastStoreError);
         }
       }
