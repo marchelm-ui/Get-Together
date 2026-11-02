@@ -4,16 +4,20 @@ Expo / React Native app. Up to 20 people share a calendar; everyone's free time 
 
 ## Run it on your phone (Pixel)
 
-1. Install **Expo Go** from the Play Store.
-2. On your computer:
-   ```bash
-   cd mobile
-   npm install
-   npx expo start
-   ```
-3. Scan the QR code with Expo Go. The app reloads live as you edit.
+Build a real APK of the app in Expo's cloud (free account, ~5–10 min), install it once, and it hot-reloads from your computer while you develop. No Android Studio, and ads work.
 
-Works immediately in **offline mode** (data stays on the phone). For real sharing between phones, do the one-time server setup below.
+```bash
+cd mobile
+npm install
+npx eas-cli login                                   # free Expo account
+npx eas-cli init                                    # links this folder to an EAS project (one time)
+npx eas-cli build -p android --profile development  # → APK download link; install it on the Pixel
+npx expo start --dev-client                         # then open the app; it connects to this dev server
+```
+
+For a standalone test build that doesn't need the dev server, use `--profile preview` instead.
+
+(Expo Go also works for a quick look — `npx expo start` and scan the QR — but it can't show the ad banner.)
 
 ## One-time server setup (Supabase, free)
 
